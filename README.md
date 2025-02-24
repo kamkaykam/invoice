@@ -31,7 +31,10 @@ Ensure you have the following installed:
      DATABASE_URL=sqlite:./data/invoices.db
      ```
 
-4. **Start the Backend Server**
+4. **Ensure Database Schema is Up-to-Date**
+   - Run any required migrations or database initialization scripts.
+   
+5. **Start the Backend Server**
    ```sh
    npm start
    ```
@@ -49,7 +52,13 @@ Ensure you have the following installed:
    npm install
    ```
 
-3. **Start the Frontend**
+3. **Set Up Proxy (for Local Development)**
+   - Add the following to `frontend/package.json` to prevent CORS issues:
+     ```json
+     "proxy": "http://localhost:3000"
+     ```
+
+4. **Start the Frontend**
    ```sh
    npm start
    ```
@@ -73,16 +82,23 @@ To deploy this project on a server:
 
 ### Backend Deployment
 
-1. **Use a process manager like PM2:**
-   ```sh
-   npm install -g pm2
-   pm2 start app.js --name "icu-e-rechnungsassistent"
+1. **Ensure `package.json` contains the correct start script:**
+   ```json
+   "scripts": {
+     "start": "node --max-old-space-size=4096 app.js"
+   }
    ```
 
-2. **Set up a reverse proxy with Nginx (optional):**
+2. **Use a process manager like PM2:**
+   ```sh
+   npm install -g pm2
+   pm2 start app.js --name "e-rechnung"
+   ```
+
+3. **Set up a reverse proxy with Nginx (optional):**
    - Configure Nginx to forward requests to the Node.js backend.
 
-3. **Enable HTTPS (optional, recommended)**
+4. **Enable HTTPS (optional, recommended)**
    - Use Let's Encrypt or a similar SSL provider for security.
 
 ### Frontend Deployment
@@ -100,9 +116,13 @@ To deploy this project on a server:
      serve -s build -l 3001
      ```
 
+3. **Update API URLs in `src/services/api.js` for Production**
+   - Replace `http://localhost:3000` with the live backend URL.
+
 ## Additional Notes
 - Ensure the SQLite database (`invoices.db`) has the necessary schema before deployment.
 - If using Docker, create a `Dockerfile` and define the containerized environment.
+- Ensure security measures are in place, including environment variable protection and secure API handling.
 
 ## License
 MIT License
